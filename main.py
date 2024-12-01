@@ -1,36 +1,29 @@
-pip install aiogram
+import asyncio
 
-import logging
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import ParseMode
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
-from aiogram.utils import executor
-
-API_TOKEN = 'YOUR_API_TOKEN'  # Замените на ваш токен от бота
-
-# Настройка логирования
-logging.basicConfig(level=logging.INFO)
-
-# Инициализация бота и диспетчера
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
-dp.middleware.setup(LoggingMiddleware())
-
-# Обработчик команды /start
-@dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
-    await message.reply("Привет! Я простой бот на aiogram!")
-
-# Обработчик команды /help
-@dp.message_handler(commands=['help'])
-async def send_help(message: types.Message):
-    await message.reply("Этот бот может ответить на команды /start и /help.")
-
-# Обработчик текстовых сообщений
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.answer(f"Ты сказал: {message.text}")
+from src.handlers import user_handler
+from src.misc import bot, dp
+from src.methods.database.init_db import init_databases
 
 # Запуск бота
-if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+
+# Инициализация баз данных
+async def on_startup():
+    await init_databases()  # Инициализация всех баз данных
+
+def register_handlers():
+    dp.include_routers(user_handler.router)
+
+async def main():
+    await on_startup()  # Вызов инициализации баз данных
+    register_handlers() # Регистрация обработчиков
+    # aaio_polling_task = asyncio.create_task(payment_polling())  # Отключено, если не нужно
+    
+    # Запускаем все задачи параллельно
+    await asyncio.gather(
+        dp.start_polling(bot),  # Telegram-бот
+
+    )
+if __name__ == "__main__":
+
+
+    asyncio.run(main())
