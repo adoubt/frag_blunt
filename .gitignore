@@ -1,3 +1,5 @@
 # Python artifacts
 *.pyc
 __pycache__/
+.vscode/
+venv
