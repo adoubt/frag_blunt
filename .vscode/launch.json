@@ -8,11 +8,11 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}\\main.py",
+            "program": "${workspaceFolder}/main.py",
             "console": "integratedTerminal",
-            "python": "${workspaceFolder}\\venv\\Scripts\\python",
+            "python": "${workspaceFolder}/venv/Scripts/python",
             "env": {},
-            "envFile": "${workspaceFolder}\\.env",
+            "envFile": "${workspaceFolder}/.env",
         }
     ]
 }

@@ -1,8 +1,18 @@
 @echo off
-:loop
-echo Запускаем программу...
-python "D:\code\Python\Python\speedrun\27_fragment_check\main.py"
-echo Ожидание 1 час...
-timeout /t 3600 /nobreak >nul
-echo Перезапускаем программу...
-goto loop
+REM Активация виртуального окружения
+set VENV_PATH=venv\Scripts\python.exe
+set SCRIPT_PATH=main.py
+
+REM Проверяем, существует ли интерпретатор Python в виртуальном окружении
+if exist %VENV_PATH% (
+    :start
+    %VENV_PATH% %SCRIPT_PATH%
+
+    REM Ждем 1 час (3600 секунд)
+    timeout /t 3600
+    goto start
+) else (
+    echo Виртуальное окружение не найдено. Убедитесь, что venv настроен корректно.
+    pause
+)
+
