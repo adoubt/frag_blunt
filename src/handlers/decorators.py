@@ -14,10 +14,13 @@ def new_user_handler(function):
             await UsersDatabase.create_user(user_id)
             await message.answer('Password?')
             await state.set_state(PassStates.pass_ask)
+            
             if user_id == int(bot_id):
                 
                 await UsersDatabase.set_value(user_id,'is_admin',1)
+                
                 #назначение бота админом для кнопок в админке(костыль, вроде пофикшен)
+            return
         user = await UsersDatabase.get_user(user_id)
         if user[2] == 0:
                 

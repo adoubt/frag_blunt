@@ -15,16 +15,21 @@ from src.methods.database.users_manager import UsersDatabase
 router =  Router()
 from src.misc import bot,bot_id,PASSWORD
 
-
+help_msg = '''/ava {n} Available
+/una {n} Unavailable
+/tak {n} Taken
+n = 10 by default
+/db  Download Base
+/del {username}
+/del all
+/start
+/help
+'''
 
 @router.message(Command("start"))
 @new_user_handler
 async def start_handler(message: Message, state: FSMContext,is_clb=False,**kwargs):
-    await message.answer('''/ava n Available
-/una n- Unavailable
-/tak n-  Taken
-/db - Download All
-''')
+    await message.answer(help_msg)
 
 @router.message(Command("ava"))
 @new_user_handler
@@ -67,7 +72,8 @@ async def del_handler(message: Message,  state = FSMContext,is_clb=False,**kwarg
        await message.answer('Missing username (/del durov)') 
        return
     parametr = arg[1]
-    await DbManager.del_username(parametr) 
+    if parametr == 'all': await DbManager.del_usernames() 
+    else: await DbManager.del_username(parametr) 
     await message.answer('Deleted')
 
 
@@ -91,16 +97,11 @@ async def db_handler(message: types.Message, state = FSMContext, is_clb=False, *
 @router.message(Command("help"))
 @new_user_handler
 async def send_help(message: Message, state = FSMContext, is_clb=False,**kwargs):
-    await message.answer('''/ava n Available
-/una n- Unavailable
-/tak n- Taken
-/db - Download All
-/del username/all
-''')
+    await message.answer(help_msg)
 
 
 # Обработчик текстовых сообщений
-@router.message(F.text and F.text!=PASSWORD)
+@router.message(F.text and F.text!=f'{PASSWORD}'and F.text!='start')
 @new_user_handler
 async def check_username(message: Message, state = FSMContext,**kwargs):
     if not message.text:
@@ -111,7 +112,7 @@ async def check_username(message: Message, state = FSMContext,**kwargs):
     msg = await message.answer(text,parse_mode='HTML')
     count = 0
     for username in message_lines:
-        if validate_string(username):
+        if not validate_string(username):
             await message.answer(f'{username} - некоректный ввод')
             continue
         result = await check_username(username)
@@ -154,7 +155,7 @@ def validate_string(s: str) -> bool:
         return False
     except:
 
-        return True if ' ' not in s and re.match('^[A-Za-z0-9_]$', s) else False
+        return True if ' ' not in s and re.match('^[A-Za-z0-9_]+$', s) else False
     
 
 @router.message(PassStates.pass_ask)
