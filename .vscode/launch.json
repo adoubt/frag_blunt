@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
             "console": "integratedTerminal",
-            "python": "${workspaceFolder}/venv/bin/python",   // Для Linux/macOS
+            "python": "${workspaceFolder}/venv/Scripts/python",
             "env": {},
             "envFile": "${workspaceFolder}/.env",
         }
